@@ -33,7 +33,7 @@
     -webkit-user-select: none;
     touch-action: manipulation;
     animation: floatKucing 3s ease-in-out infinite;
-    transition: transform 0.1s ease-out;
+    transition: transform 0.2s ease;
     will-change: transform;
   }
 
@@ -44,6 +44,7 @@
     display: block;
     pointer-events: none;
     filter: drop-shadow(0 0 20px rgba(160, 32, 240, 0.7));
+    transition: filter 0.2s ease;
   }
 
   @keyframes floatKucing {
@@ -51,15 +52,20 @@
     50%      { transform: translateY(-15px); }
   }
 
-  /* Efek lonjong saat dipencet — pakai :active */
-  #btnKucing:active {
-    animation: none;
-    transform: scaleX(1.4) scaleY(0.7) !important;
+  /* Efek muter saat dipencet */
+  #btnKucing.spin {
+    animation: spinKucing 1s linear infinite;
   }
 
-  #btnKucing:active img {
+  #btnKucing.spin img {
     filter: drop-shadow(0 0 30px rgba(255, 0, 255, 1))
             drop-shadow(0 0 60px rgba(160, 32, 240, 0.9));
+  }
+
+  @keyframes spinKucing {
+    0%   { transform: rotate(0deg) scale(1); }
+    50%  { transform: rotate(180deg) scale(1.15); }
+    100% { transform: rotate(360deg) scale(1); }
   }
 </style>
 </head>
@@ -76,10 +82,26 @@
   var snd = document.getElementById('snd');
 
   btn.addEventListener('click', function() {
+    // Mulai muter
+    btn.classList.remove('spin');
+    void btn.offsetWidth; // reset animasi biar bisa muter ulang
+    btn.classList.add('spin');
+
+    // Play sound
     snd.currentTime = 0;
     snd.volume = 1.0;
     var p = snd.play();
     if (p !== undefined) p.catch(function(e){ console.log(e); });
+  });
+
+  // Berhenti muter setelah sound selesai
+  snd.addEventListener('ended', function() {
+    btn.classList.remove('spin');
+  });
+
+  // Safety: kalau sound error, stop muter setelah 5 detik
+  snd.addEventListener('error', function() {
+    setTimeout(function() { btn.classList.remove('spin'); }, 500);
   });
 </script>
 
