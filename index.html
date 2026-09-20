@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KUROI KASEP</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #0a0011;
+    background-image: url('https://cdn.phototourl.com/free/2026-09-20-a09cec42-004c-479a-8ad6-d9be889eef57.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #btnKucing {
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    animation: floatKucing 3s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  #btnKucing img {
+    width: 60vw;
+    max-width: 380px;
+    height: auto;
+    display: block;
+    pointer-events: none;
+    filter: drop-shadow(0 0 20px rgba(160, 32, 240, 0.7));
+    transition: filter 0.2s ease;
+  }
+
+  @keyframes floatKucing {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-15px); }
+  }
+
+  #btnKucing.spin {
+    animation: spinKucing 1s linear infinite;
+  }
+
+  #btnKucing.spin img {
+    filter: drop-shadow(0 0 30px rgba(255, 0, 255, 1))
+            drop-shadow(0 0 60px rgba(160, 32, 240, 0.9));
+  }
+
+  @keyframes spinKucing {
+    0%   { transform: rotate(0deg) scale(1); }
+    50%  { transform: rotate(180deg) scale(1.15); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<button id="btnKucing" type="button">
+  <img id="imgKucing"
+       src="https://cdn.phototourl.com/free/2026-09-20-179d9aee-0f1c-4df6-a5d6-c9f211ddcd2e.png"
+       data-normal="https://cdn.phototourl.com/free/2026-09-20-179d9aee-0f1c-4df6-a5d6-c9f211ddcd2e.png"
+       data-pressed="https://iili.io/nIZZMVn.png"
+       alt="Kucing">
+</button>
+
+<audio id="snd" src="miaw.mp3" preload="auto"></audio>
+
+<script>
+  var btn = document.getElementById('btnKucing');
+  var img = document.getElementById('imgKucing');
+  var snd = document.getElementById('snd');
+
+  btn.addEventListener('click', function() {
+    // Ganti gambar ke versi pressed
+    img.src = img.dataset.pressed;
+
+    // Mulai muter
+    btn.classList.remove('spin');
+    void btn.offsetWidth;
+    btn.classList.add('spin');
+
+    // Play sound
+    snd.currentTime = 0;
+    snd.volume = 1.0;
+    var p = snd.play();
+    if (p !== undefined) p.catch(function(e){ console.log(e); });
+  });
+
+  // Setelah sound selesai → balik normal
+  snd.addEventListener('ended', function() {
+    btn.classList.remove('spin');
+    img.src = img.dataset.normal;
+  });
+
+  // Safety kalau error
+  snd.addEventListener('error', function() {
+    setTimeout(function() {
+      btn.classList.remove('spin');
+      img.src = img.dataset.normal;
+    }, 500);
+  });
+</script>
+
+</body>
+</html>
